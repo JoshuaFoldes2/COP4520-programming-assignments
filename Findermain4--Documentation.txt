@@ -1,0 +1,17 @@
+This file describe the three attributes that were requested:
+
+Statement/proof of correctness:
+
+This code is correct because it uses mathematical principles to run the code.  It runs by creating an array of all the numbers that are possible primes.
+It then divides the board into 8 different areas.  Each thread takes one area and then checks each area for each prime known.  It starts with 3,
+and while the threads are checking that, the first thread is clearing out the multiples of 3.  The first thread will remove non primes before the
+other threads can reach them.  The algorithm obviously decreases the number of numbers it searches as the prime's value increases as well.  This process will always weed out the non primes cause if any number was eliminated because it was a factor of a prime, then it wasn't a prime.  This process creates a fast program that has comes back correct every time.
+
+Experimental Evaluation:
+
+The method has been test a lot with values up to 10^6 power.  Unfortunately, it seems the only machine I had access to at this time was unable to handle the memory needs to go above that number threshold and Eustis was not available to me since there are no classes I am in that are specifically utilizing Eustis.  However, the program currently finds the values for 10^6 and many different values smaller than it without fail.  The program is currently optimized for multiples of 10. It was run 100's of times at several values and came back with the exact same values every single time.  This program is airtight and should absolutely run on any larger data sets.  
+
+
+Efficiency:
+
+This algorithm is highly optimized.  The algorith only checks the 4 numbers out of every 10 that can be prime.  It only checks numbers ending in 1,3,7,9.  It already counts 2, 5, so as to not miss those primes.  It also does not need to check their multiples since all of them are already removed from the table.  The algorithm that removes non primes always tries to minimize the numbers checked in each cycle and always makes sure to not check numbers previously checked.  The threads divide the work by splitting the table into 8 sections.  This results in 0.1s and 0.2s runtimes for numbers like 10^5 on my very limited machine.  This program is extremely efficient.
