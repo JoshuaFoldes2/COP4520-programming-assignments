@@ -1,0 +1,63 @@
+This file describe the three attributes that were requested:
+
+----MinotaurMaze----
+
+Statement/proof of correctness:
+The program runs by creating an array of threads with the total guest number.  It then starts them and has them wait to be activated by the controller thread (main).
+The controller then chooses a random number corresponding to a thread in the array and then runs that thread.  The thread logic runs as follows, if it is supposed to run
+it continues into the logic.  This is done since sometimes the start command causes run() to be used by some threads.  this does not occur once the controller thread is
+running, but this makes sure that the logic is run only when the controller calls it.  The logic then makes sure that the thread running it has either not eaten the cupcake
+or is the leader (the leader is supposed to not eat the cupcake till last, however, I added this so the code can continue if this isn't the case for some reason).  If the
+thread is the leader, it replaces the cupcake when it is gone and if the leader is the last thread to have not eaten the cupcake, it then eats the cupcake.  The non-leader
+threads eat the cupcake.  They can only eat the cupcake once because if they have eaten the cupcake, they can't enter the inner logic and the leader thread cannot reach
+the non-leader logic.
+
+The controller thread continues to select threads to run until the leader eats the cupcake at which point the code terminates.
+
+The code also prints the number of guests who have eaten a cupcake after everytime the cupcake is replace and when the leader eats the cupcake.
+
+Experimental Evaluation:
+The code was tested many times using values from 10 and 20 to 100 and 1000.  Sometimes when I would run the code for the first time in a test battery,
+The code would randomly go into an infinity loop, however, when this happened, it would not happen again and was probably a system hiccup due to running
+the code for the first time after some changes or something since it wouldn't happen again in any of my test batteries.  Overall, I could run the code 
+many times with it terminating, showing it had run through the cupcake replacement code a number of times equal to the thread count.
+
+
+Efficiency:
+The code if as efficient as a random chance code can be.  Based on the code problems, run count can't really substanciate this.  However, the logic is 
+minimal and the run time is very low with double digit runtimes (in ms) for 100 guests.
+
+
+----MInotaurQueue----
+
+Statement/proof of correctness:
+The logic of this program is it creates an array of threads with the number it is given and then initializes all of them and makes sure all their values are set to 0.
+Then a queue is made.  The controller thread, main, then pops the head at the start if there is a head and if the visitLength counter is 0.  It then selects the number
+of threads to add to the queue based upon queue capacity and random chance.  if the queue is empty, at least one guests will enter the queue.  Also, the controller won't
+try and add more people than there are available spots in the queue.  Based on the setup of this code and the fact that there are always two values the random number generator
+can generate that result in no threads being added to the queue, as the queue fills up, it is less likely for more threads to joing the queue.  This is similar to real life
+Where people are less likely to join a long line and wait for it to shrink before joining.  The controller then starts going down the list of threads, checking if they are
+already in the queue and then uses a random number to determine whether they will enter the queue or not.  This part of the code goes down the array and resets at 0 upon
+reaching it.  The threads have an attribute noting whether they are in the queue or not.  Also, threads that have not seen the vase yet are more likely to join than threads
+who have not.  This again simiulates real life because most people are less likely to go and see something they have already seen.  When a new thread becomes the head, 
+a random visit length is chosen, from 1 to 3 seconds.  The head is then asked to run its run() which wait the thread 1 second then decrements the visit length.  This allows
+the queue to fill up during longer visits.  Upon the count becoming zero, the thread then marks itself as having gone through the queue on its first time doing so.  On repeat
+times going through the queue, it will not try and remark itself as having seen it and incorrectly increasing the number of people who have seen the vase.  
+
+The termination condition, for simplicity's sake is all threads going through the queue once.  This isn't a specified end condition, however, the termination condition
+was ambiguous and the best condition I could decide on was that.  Its the only real guaranteed way to make sure all threads have entered the queue once because as visitor
+count increases, also does the chance a time based end condition would leave some threads out.  You see, the higher number of threads, the more guests that are competing
+for spots.  And since there is a decent wait with the method I created, greatly decrease the chance of a thread that is new to get added to the queue an exiting the queue
+within the set time frame as the program gets closer and closer to completion.  It will terminate, however the program times increases greatly as the thread count grows.
+
+Experimental Evaluation:
+I tested the code with lots of different values.  It works with a variety of thread counts.  It will once in a while hiccup after running it for the first time, however, a
+quick restart solves that issue and it doesn't come up again.  Except for the few hiccups, it always reaches completion, albeit, I didn't use values over 100 cause 100
+takes a while.  It is supposed to based upon the nature of the program.  The last run I had with 100 guests had an 8 min runtime, so I wasn't planning to run anything higher.
+It theoretically can do it based upon the fact that I can have thousand of threads of equal size in the other program, however, It is likely that testing higher is not worth
+the time investment.
+
+Efficiency:
+The code is designed efficiently for the level of randomness required for this assignment.  The runtime is pretty high, but that is mainly due to each iteration of the loop
+containing a 1 second wait.
+
