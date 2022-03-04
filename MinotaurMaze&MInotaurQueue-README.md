@@ -6,3 +6,5 @@ The assignments MinotaurMaze and MInotaurQueue can be run by compiling in an IDE
 An alternative method is opening the command line to where the file is stored and then executing javac MinotaurMaze.java and javac MInotaurQueue.java then executing java MinotaurMaze and java MInotaurQueue
 
 The program prints outputs to the terminal.
+
+Sometimes when you run the code for the first time, it will get stuck at the beginning.  If it does, restart it and it should run as intended.
