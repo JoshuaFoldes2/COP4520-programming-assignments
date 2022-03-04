@@ -4,7 +4,7 @@ import java.math;
 
 public class MInotaurQueue extends Thread{
     //has all starting values (tGuests is the total guests so for the purposes of testing, this is the value to change)
-    static int tGuests = 100;
+    static int tGuests = 20;
     static int sGuests = 0;
     MInotaurQueue guestList[];
     Queue<MInotaurQueue> vaseLine;
