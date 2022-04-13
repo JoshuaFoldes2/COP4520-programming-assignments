@@ -1,0 +1,35 @@
+This file describe the three attributes that were requested:
+
+----MinotaurGift----
+
+Statement/proof of correctness:
+The program creates an array of keys equal to the number of presents in the bag.  It then shuffles around the keys to make them random.  It then generates a
+LockFree linked list.  The LockFree code came from the book.  I then added an appropriate Node class to facilitate the code.  The code then creates 4 threads
+and they run until the number of nodes removed from the list is equal to the number of gifts in the bag.  It will then run a dual random system with the goal
+of randomly picking between the three actions, heavily weighing towards the add and remove functions.  The add option adds a node into the list and the remove
+option "pops" the "head" of the list (not the sentinel node but the first content node).  It counts when it adds a node and when it deletes a node.  The threads
+do not return until all the nodes have been put in the list and then removed from it because it is related to the counter for the nodes removed and the only way that increases in value is if the remove function returns true.  Therefore, as long as the list returns, it is working properly.
+
+Also, there is a progress bar for the run.  I will show the percent of objects removed from the list.  
+
+
+Experimental Evaluation:
+The code was tested for the 500000 gift values many times.  Gifts were added to the list and removed from the list and the program ran to completion.  
+
+Efficiency:
+Its super efficient.  Its almost instantaneous with 500k gifts to add and remove.  The code outside the list itself is just the randomizers for the bag and for the servant decision.  Its very minimalistic and efficient... or as efficient as code can be with random decisions.
+
+----MarsRover----
+
+Statement/proof of correctness:
+The program is very simple.  It creates 8 threads.  It then takes an 8 by 60 array and gives each thread its own row of 60 ints.  Each thread then generates a
+random number between -100 and 70 and put it in one of the array slots in its row until its filled the array.  Once all the threads are done, the top 5 unique
+values are found and the program compares the max and min temperatures for one column with the max and min of the columns 10 down to find the highest temp
+difference.  It then prints that data.
+
+Experimental Evaluation:
+I ran the program many times printing out the array and checking the interval and max values against the recorded numbers.  I also tested it to make sure it would
+be repeatable and it is.  I read the max and min values include the boundaries prescribed in the problem, so it has the correct boundaries for the random number.
+
+Efficiency:
+The cod is very efficient and minimalistic.  Collects the random numbers fast and then prints out the report just as quickly.  It does its job very well.
