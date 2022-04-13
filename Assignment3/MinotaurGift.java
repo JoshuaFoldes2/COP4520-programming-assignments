@@ -148,13 +148,11 @@ public class MinotaurGift extends Thread{
             bag[temp] = temp2;
         }
 
-        //initializes the threads and sets the first thread in the array as the leader and makes sure the eaten variable on all the threads is 0 
         MinotaurGift servants[] = new MinotaurGift[4];
         for(int i = 0; i < 4; i++){
             servants[i] = new MinotaurGift();
         }
 
-        //while not the guests have eaten the cupcake, this loop pick a thread from the array randomly and has it execute run()
         System.out.print("0%-");
         servants[0].run();
         servants[1].run();
@@ -165,11 +163,11 @@ public class MinotaurGift extends Thread{
         servants[2].join();
         servants[3].join();
 
-        System.out.println("\nThe servants have finished with writing the thank you notes" + bagPlace.get() + letters.get());
+        System.out.println("\nThe servants have finished with writing the thank you notes");
     }
 
 
-    //The run for the threads
+    
     public synchronized void run(){
         while(letters.get() < bagsize){
             minotaurRequest = (((int)(Math.round(Math.random() * 99))));
