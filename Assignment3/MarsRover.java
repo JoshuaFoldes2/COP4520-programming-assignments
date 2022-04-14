@@ -23,7 +23,11 @@ public class MarsRover extends Thread{
     static AtomicInteger hC = new AtomicInteger(0);
     static AtomicInteger lC = new AtomicInteger(0);
     static AtomicInteger time = new AtomicInteger(0);
-    static int readings[][] = new int[8][60];
+    static int readings1[][] = new int[8][60];
+    static int readings2[][] = new int[8][60];
+    static int switcher[] = {0,0,0,0,0,0,0,0};
+    static int arraySource = 0;
+    static AtomicInteger finished = new AtomicInteger(0);
     static int hours = 0;
     static int timepassed = 0;
     int counter = 0;
@@ -33,59 +37,26 @@ public class MarsRover extends Thread{
         this.identity = identity;
     }
 
-    public static void main(String[] args) throws InterruptedException{
-        Scanner numHours = new Scanner(System.in);
-
-        //Scanner for number of guests, will continue requesting a number until a positive integer is given to avoid program crash
-        while(hours < 1){
-            System.out.println("\nHow many hours would you like to simulate");
-            hours = numHours.nextInt();
-        }
-        numHours.close();
-
-        //initializes the threads and sets the first thread in the array as the leader and makes sure the eaten variable on all the threads is 0 
-        MarsRover sensors[] = new MarsRover[8];
-        for(int i = 0; i < 8; i++){
-            sensors[i] = new MarsRover(i);
-            sensors[i].identity = i;
-            sensors[i].counter = 0;
-        }
-
-        //while not the guests have eaten the cupcake, this loop pick a thread from the array randomly and has it execute run()
-        while(timepassed < hours){
-            sensors[0].run();
-            sensors[1].run();
-            sensors[2].run();
-            sensors[3].run();
-            sensors[4].run();
-            sensors[5].run();
-            sensors[6].run();
-            sensors[7].run();
-            sensors[0].join();
-            sensors[1].join();
-            sensors[2].join();
-            sensors[3].join();
-            sensors[4].join();
-            sensors[5].join();
-            sensors[6].join();
-            sensors[7].join();
-
-            int timePeriod = 1, tempChange = 0;
-            int startmax = 0, startmin = 0, endmax = 0, endmin = 0;
+    static void reportGenerator(){
+        finished.set(0);
+        int timePeriod = 1, tempChange = 0;
+        int startmax = 0, startmin = 0, endmax = 0, endmin = 0;
+        //finds the min and max for each column and compares each min with the other column's max to find the biggest difference as well as checking for max and min values
+        if(arraySource == 0){
             for(int i = 0; i < 50; i++){
-                startmax = readings[0][i];
-                startmin = readings[0][i];
-                endmax = readings[0][i+10];
-                endmin = readings[0][i+10];
-                store(readings[0][i]);
+                startmax = readings1[0][i];
+                startmin = readings1[0][i];
+                endmax = readings1[0][i+10];
+                endmin = readings1[0][i+10];
+                store(readings1[0][i]);
 
 
                 for(int j = 1; j < 8; j++){
-                    startmax = Math.max(startmax, readings[j][i]);
-                    startmin = Math.min(startmin, readings[j][i]);
-                    endmax = Math.max(endmax, readings[j][i+10]);
-                    endmin = Math.min(endmin, readings[j][i+10]);
-                    store(readings[j][i]);
+                    startmax = Math.max(startmax, readings1[j][i]);
+                    startmin = Math.min(startmin, readings1[j][i]);
+                    endmax = Math.max(endmax, readings1[j][i+10]);
+                    endmin = Math.min(endmin, readings1[j][i+10]);
+                    store(readings1[j][i]);
                 }
                 int tempp = Math.max(Math.abs(startmax - endmin),Math.abs(startmin-endmax));
                 if(tempp > tempChange){
@@ -96,32 +67,135 @@ public class MarsRover extends Thread{
             }
             for(int i = 50; i < 60; i++){
                 for(int j = 0; j < 8; j++){
-                    store(readings[j][i]);
+                    store(readings1[j][i]);
                 }
             }
-            System.out.println("\n\nHigh values:  " + high.toString() + "\nLow values:  " + low.toString() + "\nThe time period with the most change is from minute " + timePeriod + " to minute " + (timePeriod + 10) + " with a change of " + tempChange);
-            for(int i = 0;i<5;i++){
-                high.set(i,0);
-                low.set(i,0);
+        }
+        else{
+            for(int i = 0; i < 50; i++){
+                startmax = readings2[0][i];
+                startmin = readings2[0][i];
+                endmax = readings2[0][i+10];
+                endmin = readings2[0][i+10];
+                store(readings2[0][i]);
+
+
+                for(int j = 1; j < 8; j++){
+                    startmax = Math.max(startmax, readings2[j][i]);
+                    startmin = Math.min(startmin, readings2[j][i]);
+                    endmax = Math.max(endmax, readings2[j][i+10]);
+                    endmin = Math.min(endmin, readings2[j][i+10]);
+                    store(readings2[j][i]);
+                }
+                int tempp = Math.max(Math.abs(startmax - endmin),Math.abs(startmin-endmax));
+                if(tempp > tempChange){
+                    timePeriod = i+1;
+                    tempChange = tempp;
+                }
+
             }
-            timepassed++;
+            for(int i = 50; i < 60; i++){
+                for(int j = 0; j < 8; j++){
+                    store(readings2[j][i]);
+                }
+            }
+
         }
 
-        //Statement of completion
+        //prints report and resets the min and max values
+        System.out.println("Report " + (timepassed+1) + " of " + hours + "\nHigh values:  " + high.toString() + "\nLow values:  " + low.toString() + "\nThe time period with the most change is from minute " + timePeriod + " to minute " + (timePeriod + 10) + " with a change of " + tempChange + "\n\n");
+        for(int i = 0;i<5;i++){
+            high.set(i,0);
+            low.set(i,0);
+        }
+        timepassed++;
+        if(arraySource == 0){
+            arraySource = 1;
+        }
+        else{
+            arraySource = 0;
+        }
+
+    }
+    public static void main(String[] args) throws InterruptedException{
+        Scanner numHours = new Scanner(System.in);
+
+        //Scanner for number of hours, will continue requesting a number until a positive integer is given to avoid program crash
+        while(hours < 1){
+            System.out.println("\nHow many hours would you like to simulate");
+            hours = numHours.nextInt();
+        }
+        numHours.close();
+
+        //initializes the threads 
+        MarsRover sensors[] = new MarsRover[8];
+        for(int i = 0; i < 8; i++){
+            sensors[i] = new MarsRover(i);
+            sensors[i].identity = i;
+            sensors[i].counter = 0;
+        }
+
+            sensors[0].start();
+            sensors[1].start();
+            sensors[2].start();
+            sensors[3].start();
+            sensors[4].start();
+            sensors[5].start();
+            sensors[6].start();
+            sensors[7].start();
+        //while the set number of hours have not transpired, runs the threads and then creates the report
+        while(timepassed < hours){
+            if(finished.get() == 8){
+                reportGenerator();
+            }
+
+        }
     }
 
     //The run for the threads
     public synchronized void run(){
-        counter = 0;
-        while(counter < 60){
-            readings[identity][counter] = (((int)(Math.round(Math.random() * 170))) - 100);
-            counter++;
+        int hourCounter = 0;
+        while(hourCounter < hours){
+            counter = 0;
+            if(switcher[identity] == 0){
+                while(counter < 60){
+                    readings1[identity][counter] = (((int)(Math.round(Math.random() * 170))) - 100);
+                    counter++;
+                    try{
+                        Thread.sleep(50);
+                    }
+                    catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+
+                }
+                finished.getAndIncrement();
+                switcher[identity] = 1;
+            }
+            else{            
+                while(counter < 60){
+                    readings2[identity][counter] = (((int)(Math.round(Math.random() * 170))) - 100);
+                    counter++;
+                    try{
+                        Thread.sleep(50);
+                    }
+                    catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+                finished.getAndIncrement();
+                switcher[identity] = 0;
+            }
+            hourCounter++;
         }
     }
 
+    //This algorithm adds the top 5 values to this list
     public static void store(int value){
         int i = hC.get();
         int find = 0;
+
+        //This determines if the number is a new unique number that belongs in the top 5 and where it belongs
         while(i >= 0){
             if(value == high.get(i)){
                 break;
@@ -148,6 +222,8 @@ public class MarsRover extends Thread{
         }
         int temp = value;
         int temp2 = 0;
+
+        //this inserts and shifts everything back
         if(find == 1){
             for(;i < 5;i++){
                 if(high.get(i) == 0){
@@ -168,6 +244,8 @@ public class MarsRover extends Thread{
         
         i = lC.get();
         find = 0;
+ 
+        //This determines if the number is a new unique number that belongs in the top 5 and where it belongs
         while(i >= 0){
             if(value == low.get(i)){
                 break;
@@ -194,6 +272,8 @@ public class MarsRover extends Thread{
         }
         temp = value;
         temp2 = 0;
+
+        //this inserts and shifts everything back
         if(find == 1){
             for(;i < 5;i++){
                 if(low.get(i) == 0){
