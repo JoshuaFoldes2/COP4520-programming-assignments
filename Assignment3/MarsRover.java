@@ -99,7 +99,7 @@ public class MarsRover extends Thread{
                     store(readings[j][i]);
                 }
             }
-            System.out.println("\n\nHigh values:  " + high.toString() + "\nLow values:  " + low.toString() + "\nThe time period with the most change is from minute " + timePeriod + " to minute " + (timePeriod + 10) + " with a change of " + tempChange);
+            System.out.println("Report " + (timepassed+1) + " of " + hours + "\nHigh values:  " + high.toString() + "\nLow values:  " + low.toString() + "\nThe time period with the most change is from minute " + timePeriod + " to minute " + (timePeriod + 10) + " with a change of " + tempChange + "\n\n");
             for(int i = 0;i<5;i++){
                 high.set(i,0);
                 low.set(i,0);
